@@ -20,34 +20,57 @@ public class Map {
 
     public class mapPar
     {
+        @Setter @Getter
+
         public Point sizePX; // pixels
+        @Setter @Getter
+
         public Point sizeRE; // RE
+        @Setter @Getter
+
         public double minR2; // minimum dist to star
+        @Setter @Getter
 
         public double gamma;
+        @Setter @Getter
+
         public double sigmaC;
+        @Setter @Getter
+
         public double angleGamma;
+        @Setter @Getter
+
         public boolean direct; // no grav
+        @Setter @Getter
         public int mode;
   /*
    0 full fill code FFC
    1 HFC
    2 SSD
   */
+        @Setter @Getter
         public int mode2; // HFC .x
         //  0 usual
         // 1 triangle
+        @Setter @Getter
 
         public int HFCStartLevel;
+        @Setter @Getter
 
         public double HFCeps; // max I grad
+        @Setter @Getter
+
         public double SSD_src_inc;  // source increment size for SSD2
+        @Setter @Getter
+
         public boolean fastV;
+        @Setter @Getter
 
         public int itterMode; // 0 classicla 1 Zhdanov
         public boolean calcDet;
         public int nItter; //steps
     };
+    @Setter @Getter
 
     public mapPar par = new mapPar();
     public Res rs = new Res();
@@ -90,7 +113,7 @@ public class Map {
 
     void setDefaultValues()
     {
-        par.sizePX = new Point(256, 256);
+        par.sizePX = new Point(1024, 1024);
         par.sizeRE = new Point(15, 15);
 
         par.mode = 1;
@@ -901,6 +924,11 @@ public class Map {
             }
             case "sizeRE": {
                 par.sizeRE = new Point(val, val);
+                return true;
+            }
+            case "sizePX": {
+                par.sizePX = new Point(val, val);
+                init();
                 return true;
             }
 

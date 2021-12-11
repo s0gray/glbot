@@ -20,15 +20,9 @@ public class Talk {
 
     Manager boss = new Manager(null);
 
-    int activeRole = 0;
-
-
     enum BotState {
         IDLE,
-        INTRO,
-        DANCER_MAIN_MENU,
-        TEACHER_MAIN_MENU,
-        ASK_ADMIN_SECRET,
+        SET_SOURCE_SIZE, SET_SOURCE_TYPE, SET_IMAGE_SIZE_PX, SET_IMAGE_SIZE_RE, SET_NG, SET_M0, SET_GAMMA, SET_SIGMAC, INTRO
     }
 
     BotState state = BotState.IDLE;
@@ -61,16 +55,194 @@ public class Talk {
             switch(input) {
                 case "/render":
                    // dataFromUItoPersist();
-                  // boss.setParams(Persist.getInstance());
+                   // boss.setParams(Persist.getInstance());
+                    boss.render();
                     byte[] jpg = boss.getMap().field.getJPG();
 
                     bot.sendImage("" +chatId,
                             new InputFile( new ByteArrayInputStream(jpg), "image.jpg"), "image");
 
                     return;
+                case "/info":
+                    String txt = "Source: type=" + boss.getSrc().getPar().getSourceType() +" ";
+                    txt += " Size=" + boss.getSrc().getPar().size +"RE\n";
+
+                    txt += "Gravitators: N=" + boss.getGen().getPar().getNg()
+                            +" Mass0="+boss.getGen().getPar().getM0() +" Seed="+ boss.getGen().getPar().getSeed()+"\n";
+
+                    txt += "Image: Size=" + boss.getMap().getPar().getSizePX() +"px = "
+                            +boss.getMap().getPar().getSizeRE()+"RE\n";
+
+                    txt += "Background Field: gamma=" + boss.getMap().getPar().getGamma() +
+                            " sigmaC="+boss.getMap().getPar().getSigmaC() +"\n";
+
+                    sendResponse(update, txt);
+                    return;
+
+                case "/source":
+                    // set source params
+                    sendResponse2(update, "set-source-params");
+                    return;
+                case "/setsourcesize":
+                    sendResponse2(update, "enter-source-size-value");
+                    this.setState(BotState.SET_SOURCE_SIZE);
+                    return;
+                case "/setsourcetype":
+                    sendResponse2(update, "choose-source-type");
+                    this.setState(BotState.SET_SOURCE_TYPE);
+                    return;
+                case "/image":
+                    sendResponse2(update, "set-image-params");
+                    return;
+                case "/setimagesizepx":
+                    sendResponse2(update, "enter-value");
+                    this.setState(BotState.SET_IMAGE_SIZE_PX);
+                    return;
+                case "/setimagesizere":
+                    sendResponse2(update, "enter-value");
+                    this.setState(BotState.SET_IMAGE_SIZE_RE);
+                    return;
+                case "/grav":
+                    // set grav params
+                    sendResponse2(update, "set-grav-params");
+                    return;
+                case "/setng":
+                    sendResponse2(update, "enter-value");
+                    this.setState(BotState.SET_NG);
+                    return;
+                case "/setm":
+                    sendResponse2(update, "enter-value");
+                    this.setState(BotState.SET_M0);
+                    return;
+                case "/setgamma":
+                    sendResponse2(update, "enter-value");
+                    this.setState(BotState.SET_GAMMA);
+                    return;
+                case "/setsigmac":
+                    sendResponse2(update, "enter-value");
+                    this.setState(BotState.SET_SIGMAC);
+                    return;
             }
 
-            sendResponse(update, "Hello !");
+            switch(state) {
+                case SET_SOURCE_SIZE:{
+                    try {
+                        float value = getFloatValue(input);
+                        boss.getSrc().setParameter("size", value);
+                        sendResponse2(update, "success");
+                        this.setState(BotState.IDLE);
+
+                        return;
+                    } catch (NumberFormatException ex1) {
+                        sendResponse2(update, "try-again");
+                        return;
+                    }
+                }
+                case SET_SOURCE_TYPE: {
+                    try {
+                        int value = getSourceTypValue(input);
+                        boss.getSrc().setParameter("type", value);
+                        sendResponse2(update, "success");
+                        this.setState(BotState.IDLE);
+
+                        return;
+                    } catch (NumberFormatException ex1) {
+                        sendResponse2(update, "try-again");
+                        return;
+                    }
+                }
+                case SET_IMAGE_SIZE_PX: {
+                    try {
+                        int value = getIntValue(input);
+                        boss.getMap().setParameter("sizePX", value);
+                        sendResponse2(update, "success");
+                        this.setState(BotState.IDLE);
+
+                        return;
+                    } catch (NumberFormatException ex1) {
+                        sendResponse2(update, "try-again");
+                        return;
+                    }
+                }
+                case SET_IMAGE_SIZE_RE: {
+                    try {
+                        float value = getFloatValue(input);
+                        boss.getMap().setParameter("sizeRE", value);
+                        sendResponse2(update, "success");
+                        this.setState(BotState.IDLE);
+
+                        return;
+                    } catch (NumberFormatException ex1) {
+                        sendResponse2(update, "try-again");
+                        return;
+                    }
+                }
+                case SET_NG:
+                {
+                    try {
+                        int value = getIntValue(input);
+                        boss.getGen().setParam("ng", value);
+                        boss.getGen().generate();
+                        sendResponse2(update, "success");
+                        this.setState(BotState.IDLE);
+
+                        return;
+                    } catch (NumberFormatException ex1) {
+                        sendResponse2(update, "try-again");
+                        return;
+                    }
+                }
+                case SET_M0:
+                {
+                    try {
+                        int value = getIntValue(input);
+                        boss.getGen().setParam("m0", value);
+                        boss.getGen().generate();
+                        sendResponse2(update, "success");
+                        this.setState(BotState.IDLE);
+
+                        return;
+                    } catch (NumberFormatException ex1) {
+                        sendResponse2(update, "try-again");
+                        return;
+                    }
+                }
+                case SET_GAMMA:
+                {
+                    try {
+                        float value = getFloatValue(input);
+                        boss.getMap().setParameter("gamma", value);
+                        sendResponse2(update, "success");
+                        this.setState(BotState.IDLE);
+
+                        return;
+                    } catch (NumberFormatException ex1) {
+                        sendResponse2(update, "try-again");
+                        return;
+                    }
+                }
+                case SET_SIGMAC:
+                {
+                    try {
+                        float value = getFloatValue(input);
+                        boss.getMap().setParameter("sigma_c", value);
+                        sendResponse2(update, "success");
+                        this.setState(BotState.IDLE);
+
+                        return;
+                    } catch (NumberFormatException ex1) {
+                        sendResponse2(update, "try-again");
+                        return;
+                    }
+                }
+
+                default:
+                    setState(BotState.INTRO);
+                    sendResponse2(update, "intro");
+                    return;
+
+            }
+           // sendResponse(update, "Hello !");
 
 
         } catch (TelegramApiException e) {
@@ -78,7 +250,24 @@ public class Talk {
         }
     }
 
+    private int getSourceTypValue(String input) {
+        switch(input) {
+            case "/flatsource": return 0;
+            case "/gausssource": return 1;
+            case "/expsource": return 2;
+            case "/limbsource": return 3;
+            case "/disksource": return 4;
+        }
+        throw new NumberFormatException();
+    }
 
+    private int getIntValue(String input) {
+        return Integer.parseInt(input);
+    }
+
+    private float getFloatValue(String input) throws NumberFormatException {
+        return Float.parseFloat(input);
+    }
 
 
     private int getIndexFromYes(String input) {
@@ -108,20 +297,6 @@ public class Talk {
         return false;
     }
 
-    private void setActiveRole(int value) {
-        log.info("setActiveRole: "+value+" "+this);
-        this.activeRole = value;
-    }
-
-    private void showDancerMainMenu(Update update) throws TelegramApiException {
-        setState(BotState.DANCER_MAIN_MENU);
-        sendResponse(update, Utils.getString("dancerMainMenu"));
-    }
-
-    private void showTeacherMainMenu(Update update) throws TelegramApiException {
-        setState(BotState.TEACHER_MAIN_MENU);
-        sendResponse(update, Utils.getString("teacherMainMenu"));
-    }
 
     void sendResponse(Update update, String text) throws TelegramApiException {
         SendMessage sendMessage = makeResponse(update);

@@ -8,16 +8,37 @@ import lombok.Setter;
 
 public class Source {
     public class SourcePar {
+        @Setter @Getter
         public double size;
+        @Setter @Getter
+
         public double Io;
+        @Setter @Getter
+
         public SourceType type;
+        @Setter @Getter
         public Point r;
+        @Setter @Getter
         public Point v;
 
+        @Setter @Getter
         public double power;
+        @Setter @Getter
         public Pix color = new Pix();
-    }
 
+        public String getSourceType() {
+          switch (type ) {
+              case eFlat: return "flat";
+              case eGauss: return "Gauss";
+              case eLimb: return "Limb";
+              case ePow: return "Exponential";
+              case eDisk: return "Black Hole";
+          }
+          return type.name();
+        }
+
+    }
+    @Setter @Getter
     public SourcePar par = new SourcePar();
 
     @Setter

@@ -20,11 +20,14 @@ import java.util.Random;
 @Slf4j
 public class GravitatorsGenerator {
 
-
     public class genPar
     {
+        @Setter @Getter
         public int  seed;          // seed for RND generator
+        @Setter @Getter
+
         public Point size;          // size of area in Re
+        @Setter @Getter
         public int area_type;            // type of area
   /*
     0 square
@@ -32,26 +35,54 @@ public class GravitatorsGenerator {
     2 circle
     3 elliptical
   */
-        public int ng;     // number of stars
+  @Setter @Getter
+
+  public int ng;     // number of stars
+        @Setter @Getter
+
         public boolean jump;            // jump in motion ?
+        @Setter @Getter
+
         public int mass_type;
         /*
           0 equal
           1 salpeter
         */
+        @Setter @Getter
+
         public float mass_min;
+        @Setter @Getter
+
         public float mass_max;
+        @Setter @Getter
+
         public float mass_power;
+        @Setter @Getter
+
         public double m0;            // mass of 1 star
+        @Setter @Getter
+
         public double v;             // speed
+        @Setter @Getter
+
         public double v_angle;
+        @Setter @Getter
+
         public boolean check_same;
+        @Setter @Getter
+
         public int mode;    // 0 N body 1 one star 2 double star  3 no motion
+        @Setter @Getter
+
         public float db_ro; // for double R
+        @Setter @Getter
+
         public float db_fi; // for double fi0
+        @Setter @Getter
+
         public float db_T; // for double w
     };
-
+    @Setter @Getter
     public genPar par = new genPar();
 
     public static final int SQUARE_TYPE = 0;
@@ -438,6 +469,7 @@ public class GravitatorsGenerator {
                 par.m0 = val;
                 return true;
             }
+
         }
         return false;
     }

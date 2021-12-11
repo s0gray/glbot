@@ -15,7 +15,6 @@ public class GLBot extends TelegramLongPollingBot {
     HashMap<Long, Talk> talks = new HashMap<Long, Talk>();
     private static final Logger log = LoggerFactory.getLogger(GLBot.class);
 
-
     /**
      * Main entry for incoming message processing
      * @param update
