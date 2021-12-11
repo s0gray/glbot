@@ -4,7 +4,10 @@ package com.ogray.glbot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.HashMap;
 
@@ -44,4 +47,11 @@ public class GLBot extends TelegramLongPollingBot {
         return "";
     }
 
+    public void sendImage(String chatId, InputFile data, String caption) throws TelegramApiException {
+        SendDocument sendDocumentRequest = new SendDocument();
+        sendDocumentRequest.setChatId(chatId);
+        sendDocumentRequest.setDocument(data);
+        sendDocumentRequest.setCaption(caption);
+        execute(sendDocumentRequest);
+    }
 }

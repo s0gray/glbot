@@ -1,17 +1,24 @@
 package com.ogray.glbot;
 
 import com.ogray.glbot.utils.Utils;
+import com.ogray.glc.Manager;
+import com.ogray.glc.Persist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.io.ByteArrayInputStream;
 
 public class Talk {
     private static final Logger log = LoggerFactory.getLogger(Talk.class);
 
     GLBot bot;
     Long chatId;
+
+    Manager boss = new Manager(null);
 
     int activeRole = 0;
 
@@ -38,35 +45,11 @@ public class Talk {
     public Talk(GLBot bot, Long chatId) {
         this.bot = bot;
         this.chatId = chatId;
-    }
-    void createNewSession(Update update) throws TelegramApiException {
-        // we need to gather info about user to start session
-        switch( state ) {
-            case INTRO: {
-                String input = update.getMessage().getText();
-                if( input.isEmpty() ) {
-                    sendResponse2(update, "makeChoice");
-                    return;
-                }
-                if("/admin".compareTo(input)==0) {
-                    sendResponse2(update, "askAdminSecret");
 
-                    setState(BotState.ASK_ADMIN_SECRET);
-                }else {
-                    sendResponse2(update, "makeChoice");
-                    return;
-                }
-            }
-            break;
-
-            case IDLE:
-            default:
-            {
-                setState(BotState.INTRO);
-                sendResponse2(update, "intro");
-                return;
-            }
-        }
+        boss.init();
+        boss.setParams(Persist.getInstance());
+        boss.refreshGravs();
+        boss.render();
     }
 
     public void onUpdateReceived(Update update) {
@@ -74,8 +57,20 @@ public class Talk {
         log.info("+onMessage, state="+state+",["+input+"]");
         try {
         //    Long userId = update.getMessage().getFrom().getId();
+
+            switch(input) {
+                case "/render":
+                   // dataFromUItoPersist();
+                  // boss.setParams(Persist.getInstance());
+                    byte[] jpg = boss.getMap().field.getJPG();
+
+                    bot.sendImage("" +chatId,
+                            new InputFile( new ByteArrayInputStream(jpg), "image.jpg"), "image");
+
+                    return;
+            }
+
             sendResponse(update, "Hello !");
-               //this.showDancerMainMenu(update);
 
 
         } catch (TelegramApiException e) {
